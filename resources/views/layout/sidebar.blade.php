@@ -37,25 +37,15 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        Interface
+        Accueil
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
-            {{-- <i class="fas fa-fw fa-cog"></i> --}}
-            <span>Accueil</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="button">Buttons</a>
-                <a class="collapse-item" href="cards">Cards</a>
-            </div>
-        </div>
+        <a class="nav-link" href="home">
+            {{-- <i class="fas fa-fw fa-table"></i> --}}
+            <span>Accueil</span></a>
     </li>
-
     <!-- Nav Item - Utilities Collapse Menu -->
     {{-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
@@ -80,7 +70,7 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-        Addons
+          Espace Tontine
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
@@ -93,15 +83,11 @@
         <div id="collapsePages" class="collapse show" aria-labelledby="headingPages"
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Login Screens:</h6>
-                <a class="collapse-item" href="connexion">Login</a>
-                <a class="collapse-item" href="register">Register</a>
-                <a class="collapse-item" href="forgot">Forgot Password</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">Other Pages:</h6>
-                <a class="collapse-item" href="404">404 Page</a>
-                <a class="collapse-item active" href="home">Blank Page</a>
-            </div>
+                <h6 class="collapse-header">Espace Tontine:</h6>
+                <a class="collapse-item" href="Tontines">Consulter les Tontines</a>
+                <a class="collapse-item" href="mestontines">Mes Tontines</a>
+                <a class="collapse-item" href="HistoriqueTontines">Historique </a>
+
         </div>
     </li>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Participant;
 use App\Models\User;
+use App\Models\Tontine;
 use Illuminate\Http\Request;
 
 class InscriptionController extends Controller

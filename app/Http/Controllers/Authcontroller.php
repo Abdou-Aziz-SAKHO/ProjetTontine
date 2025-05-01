@@ -38,4 +38,11 @@ class Authcontroller extends Controller
     public function Dashboard(){
         return view('page.boards.Dashboard');
     }
+
+    public function logout(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('auth.create');
+    }
 }

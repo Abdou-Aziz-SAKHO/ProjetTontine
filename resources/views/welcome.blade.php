@@ -21,7 +21,7 @@
             Découvrez une plateforme moderne et conviviale pour gérer vos tontines en toute simplicité et sécurité.
         </p>
         <div style="margin-top: 30px;">
-            <a href="#" style="text-decoration: none; background-color: #4e73df; color: white; padding: 10px 20px; border-radius: 5px; font-size: 1rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <a href="mestontines" style="text-decoration: none; background-color: #4e73df; color: white; padding: 10px 20px; border-radius: 5px; font-size: 1rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
                 Accéder à votre espace Tontine
             </a>
         </div>

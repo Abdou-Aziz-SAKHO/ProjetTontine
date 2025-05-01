@@ -16,4 +16,9 @@ class Tontine extends Model
 
     ];
 
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'participants', 'idtontine', 'iduser');
+    }
+
 }

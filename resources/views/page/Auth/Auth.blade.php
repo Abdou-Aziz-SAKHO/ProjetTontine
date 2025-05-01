@@ -2,117 +2,108 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>Connexion - Dalaal ak Jamm</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
 </head>
 
-<body class="bg-gradient-primary">
+<body style="background-color: #f2f2f5;"> <!-- Changement de la couleur de l'arrière-plan -->
 
-    <div class="container">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;"> <!-- Centrage vertical et horizontal -->
+        <div class="col-xl-10 col-lg-12 col-md-9">
 
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
+            <div class="card o-hidden border-0 shadow-lg">
+                <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                        <!-- Left Section: Image and Text -->
+                        <div class="col-lg-6 d-flex align-items-center justify-content-center" style="background-color: #f2f2f5;">
+                            <div class="text-center p-4">
+                                <img src="{{ asset('img/logo.png') }}" alt="Login Image" class="img-fluid mb-4" style="max-width: 300px;">
+                                <h3 class="text-primary" style="font-family: 'Arial', sans-serif; font-weight: bold;">Bienvenue ,Dalaal ak Jamm thi Natte Bii</h3>
+                                <p style="font-family: 'Verdana', sans-serif; font-size: 1rem; color: #4f498a;">
+                                    Connectez-vous pour accéder à votre espace personnel et gérer vos tontines en toute simplicité.
+                                </p>
+                            </div>
+                        </div>
 
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Dalaal ak Jamm</h1>
+                        <!-- Right Section: Login Form -->
+                        <div class="col-lg-6" style="background-color: #ffffff;">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Connexion</h1>
+                                </div>
+                                <!-- Affichage du message d'erreur -->
+                                @if (session('error'))
+                                    <div class="alert alert-danger text-center">
+                                        {{ session('error') }}
                                     </div>
-                                    <!-- affichage du message d'erreur-->
-                                    @if (@session('error'))
-                                        <div class="alert alert-danger text-center" >
-                                            {{session('error') }}
+                                @endif
 
-                                         </div>
-                                    @endif
+                                <form class="user" method="post" action="{{ route('auth.store') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user"
+                                            id="exampleInputEmail" aria-describedby="emailHelp" name="email"
+                                            placeholder="Entrez votre adresse email..." required>
+                                        @error('email')
+                                            <small style="color: red">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user"
+                                            id="exampleInputPassword" placeholder="Mot de passe" name="password" required>
+                                        @error('password')
+                                            <small style="color: red">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck">
+                                            <label class="custom-control-label" for="customCheck" name="Remember">Se souvenir de moi</label>
+                                        </div>
+                                    </div>
 
-                                    <form class="user" method="post" action="{{route('auth.store')}}">
-                                        @csrf
-                                        <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp" name="email"
-                                                placeholder="Enter Email Address..." required>
-                                                @error('email')
-                                                    <small style="color: red">{{$message}}</small>
-                                                @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password" name="password" required>
-                                                @error('password')
-                                                <small style="color: red">{{$message}}</small>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck" name="Remember">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div>
-
-                                       <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                       </button>
-                                        <hr>
-                                       <!-- <a href="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>-->
-                                    </form>
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                                        Connexion
+                                    </button>
                                     <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register">Create an Account!</a>
-                                    </div>
+                                </form>
+                                <div class="text-center">
+                                    <a class="small" href="forgot">Mot de passe oublié ?</a>
+                                </div>
+                                <div class="text-center">
+                                    <a class="small" href="register">Créer un compte !</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="{{asset('vendor/jquery/jquery.min.js')}}"></script>
-    <script src="{{asset('vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="{{asset('vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="{{asset('js/sb-admin-2.min.js')}}"></script>
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
 </body>
 

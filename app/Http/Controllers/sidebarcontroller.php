@@ -35,6 +35,9 @@ class sidebarcontroller extends Controller
     public function tables(){
         return view('page.boards.tables');
     }
+    public function Consultertontine(){
+        return view('page.boards.Tontine');
+    }
 
     }
 

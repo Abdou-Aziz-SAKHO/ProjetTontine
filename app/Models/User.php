@@ -48,4 +48,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+
+    public function tontines()
+    {
+        return $this->belongsToMany(Tontine::class, 'participants', 'iduser', 'idtontine');
+    }
 }
