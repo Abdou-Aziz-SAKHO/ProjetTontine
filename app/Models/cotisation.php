@@ -14,4 +14,15 @@ class cotisation extends Model
         'mode_paiement',
 
     ];
+
+
+    public function participant()
+{
+    return $this->belongsTo(Participant::class, 'idparticipant');
+}
+
+public function tontine()
+{
+    return $this->belongsTo(Tontine::class, 'idtontine', 'id');
+}
 }

@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\buttoncontroller;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\CotisationController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\sidebarcontroller;
 use App\Http\Controllers\TontineController;
+
+use App\Http\Controllers\TirageController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -18,9 +23,9 @@ Route::get('/forgot',[AuthController::class, 'forgot'])->name('forgot.password')
 Route::post('/forgot',[AuthController::class, 'create'])->name('password.reset');
 //Pagination entre les pages
 
-Route::get('/button',[sidebarcontroller::class, 'button'])->name('button');
+Route::get('/creerTontine',[sidebarcontroller::class, 'button'])->name('tontine.create');
 Route::get('/cards',[sidebarcontroller::class, 'cards'])->name('cards');
-Route::get('/colors',[sidebarcontroller::class, 'colors'])->name('colors');
+Route::get('/tirages',[sidebarcontroller::class, 'tirages'])->name('tirages');
 Route::get('/border',[sidebarcontroller::class, 'border'])->name('border');
 Route::get('/animation',[sidebarcontroller::class, 'animation'])->name('animation');
 Route::get('/other',[sidebarcontroller::class, 'other'])->name('other');
@@ -62,3 +67,34 @@ Route::group(['middleware' => ['isUser']], function () {
     Route::post('/tontines/{id}/participer', [TontineController::class, 'participer'])->name('tontines_participer');
 
 });
+
+
+// Routes pour les tontines
+Route::get('/listerlestontines', [TontineController::class, 'indexe'])->name('listerlesTontines'); // Afficher la liste des tontines
+Route::get('/tontines/create', [TontineController::class, 'create'])->name('page.boards.createTontine'); // Afficher le formulaire de création
+Route::post('/tontines', [TontineController::class, 'store'])->name('tontines.store'); // Enregistrer une nouvelle tontine
+Route::delete('/tontines/{id}', [TontineController::class, 'destroy'])->name('tontines.destroy'); // Supprimer une tontine
+Route::get('/suptontines', [TontineController::class, 'listTontines'])->name('page.boards.listerlesTontines');
+Route::get('/participants', [TontineController::class, 'participants'])->name('tontines.participants');
+Route::get('/tontines/historique', [TontineController::class, 'historique'])->name('tontines.historique');
+
+//Route pour modifier tontine
+Route::get('/tontines/modifier', [TontineController::class, 'modifier'])->name('tontines.modifier');
+Route::get('/tontines/{id}/edit', [TontineController::class, 'edit'])->name('tontines.edit');
+Route::put('/tontines/{id}', [TontineController::class, 'update'])->name('tontines.update');
+
+// Route pour afficher les détails d'une tontine
+Route::get('/tontinesconsulter', [TontineController::class, 'consulter'])->name('tontines.consulter');
+Route::get('/tontines/{id}', [TontineController::class, 'show'])->name('tontines.show');
+
+// Routes pour les tirages
+Route::get('/tirages', [TirageController::class, 'index'])->name('tirage.index');
+Route::post('/tirages/{id}/tirer', [TirageController::class, 'tirer'])->name('tirage.tirer');
+
+Route::get('/user/{id}/details', [ParticipantController::class, 'details'])->name('userdetails');
+Route::get('/participants', [ParticipantController::class, 'showParticipants'])->name('participants');
+Route::put('/tontines/{id}', [TontineController::class, 'updateTontine'])->name('tontines.update');
+
+
+Route::get('/search', [CotisationController::class, 'search'])->name('search');
+Route::get('/mes-transactions', [CotisationController::class, 'mesTransactions'])->name('mestransactions');

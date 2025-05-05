@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cotisations', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('iduser');
-            $table->unsignedBigInteger('idtontine');
-            $table->primary('iduser','idtontine');
+            $table->unsignedBigInteger('idtontine')->nullable();;
+            // $table->primary('iduser','idtontine');
              $table->integer('montant');
             $table->enum('mode_paiement',['ESPECE','WAVE','OM']);
             $table->timestamps();
 
-            $table->foreign('iduser')->references('id')->on('users');
-            $table->foreign('idtontine')->references('id')->on('tontines');
+            $table->foreign('iduser')->references('id')->on('users') ->onDelete('cascade');
+            $table->foreign('idtontine')->references('id')->on('tontines') ->onDelete('cascade');
         });
     }
 
@@ -29,6 +30,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('cotisations', function (Blueprint $table) {
+            $table->dropForeign(['iduser']);
+            $table->dropForeign(['idtontine']);
+        });
+
         Schema::dropIfExists('cotisations');
-    }
-};
+    }};

@@ -11,5 +11,11 @@ class Image extends Model
         'nomImage',
 
     ];
+     // Relation avec le modèle Tontine
+     public function tontine()
+     {
+         return $this->belongsTo(Tontine::class, 'idtontine'); // 'idtontine' est la clé étrangère
+     }
+ }
 
-}
+

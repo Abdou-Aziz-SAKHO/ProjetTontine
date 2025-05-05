@@ -26,7 +26,7 @@
                     <th>Date de fin</th>
                     <th>Montant Total</th>
                     <th>Montant de base</th>
-                    <th>Nombre de Participants m</th>
+                    <th>Nombre de Participants </th>
                     <th>Fréquence</th>
                     <th>Action</th>
                 </tr>
@@ -35,10 +35,10 @@
                 @foreach($tontines as $tontine)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $tontine->nom }}</td>
+                        <td>{{ $tontine->image->nomImage}}</td>
                         <td>{{ $tontine->datedebut }}</td>
                         <td>{{ $tontine->datefin }}</td>
-                        <td>{{ $tontine->montant_total }}</td>
+                        <td>{{ $tontine->montant_Total }}</td>
                         <td>{{ $tontine->montant_base }}</td>
                         <td>{{ $tontine->nbreParticipant }}</td>
                         <td>{{ $tontine->frequence }}</td>

@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Tontine::class, 'participants', 'iduser', 'idtontine');
     }
+
+    public function cotisations()
+{
+    return $this->hasMany(Cotisation::class, 'iduser', 'id');
+}
 }

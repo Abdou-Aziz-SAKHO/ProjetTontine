@@ -35,10 +35,10 @@
             <tbody>
                 @foreach($tontines as $tontine)
                     <tr>
-                        <td>{{ $tontine->nom }}</td>
+                        <td>{{ $tontine->image->nomImage }}</td>
                         <td>{{ $tontine->datedebut }}</td>
                         <td>{{ $tontine->datefin }}</td>
-                        <td>{{ $tontine->montant_total }}</td>
+                        <td>{{ $tontine->montant_Total }}</td>
                         <td>{{ $tontine->montant_base }}</td>
                         <td>{{ $tontine->nbreParticipant }}</td>
                         <td>{{ $tontine->participants_count }}</td>

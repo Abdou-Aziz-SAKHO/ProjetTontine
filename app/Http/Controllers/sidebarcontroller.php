@@ -8,13 +8,13 @@ class sidebarcontroller extends Controller
 {
 
     public function button(){
-        return view('page.boards.button');
+        return view('page.boards.createTontine');
     }
     public function cards(){
         return view('page.boards.cards');
     }
-    public function colors(){
-        return view('page.boards.colors');
+    public function tirages(){
+        return view('page.boards.tirages');
     }
     public function border(){
         return view('page.boards.border');

@@ -18,15 +18,12 @@ return new class extends Migration
             $table->integer('montant_Total');
             $table->integer('montant_base');
             $table->integer('nbreParticipant');
-            $table->enum('frequence',
-        [
-            'JOURNALIERE',
-            'HEBDOMADAIRE',
-            'MENSUELLE'
-
-        ]);
+            $table->enum('frequence', ['HEBDOMADAIRE', 'MENSUELLE', 'ANNUELLE']) ;
             $table->timestamps();
         });
+
+
+
     }
 
     /**
@@ -36,4 +33,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('tontines');
     }
+
+
 };

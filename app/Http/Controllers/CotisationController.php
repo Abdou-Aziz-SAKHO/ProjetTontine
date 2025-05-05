@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\cotisation;
+use App\Models\Image;
 use App\Models\Tontine;
 use App\Models\Participant;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +71,38 @@ public function processPaiement(Request $request, $id)
 
      // Retourner un message de succès
      return redirect()->route('Tontines')->with('success', 'Votre paiement de ' . $montant . ' FCFA a été effectué avec succès.');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query'); // Récupérer la requête de recherche
+
+        // Rechercher dans les utilisateurs
+        $users = User::where('nom', 'LIKE', "%$query%")
+            ->orWhere('prenom', 'LIKE', "%$query%")
+            ->orWhere('email', 'LIKE', "%$query%")
+            ->get();
+
+        // Rechercher dans les tontines
+        $tontines = Tontine::whereHas('image', function ($q) use ($query) {
+            $q->where('nomImage', 'LIKE', "%$query%");
+        })
+        ->orWhere('frequence', 'LIKE', "%$query%")
+        ->get();
+
+        // Retourner les résultats à une vue
+        return view('results', compact('users', 'tontines', 'query'));
+    }
+
+    public function mesTransactions()
+    {
+        // Récupérer les cotisations de l'utilisateur connecté
+        $userId = FacadesAuth::user()->id; // ID de l'utilisateur connecté
+        $cotisations = cotisation::where('iduser', $userId)
+            ->with('tontine') // Charger la relation avec les tontines
+            ->get();
+
+        return view('page.boards.mestransaction', compact('cotisations'));
     }
 
 }

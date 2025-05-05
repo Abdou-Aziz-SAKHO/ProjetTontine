@@ -12,7 +12,7 @@
 
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="\home">
         <div class="sidebar-brand-icon">
-            <img class="img-profile rounded-circle" src="img/logo.png" alt="Logo" style="width: 50px; height: 50px;">
+            <img class="img-profile rounded-circle" src="{{ asset('img/logo.png') }}" alt="Logo" style="width: 50px; height: 50px;">
         </div>
         <div class="sidebar-brand-text mx-3"> Natte
             <!-- Ton texte de marque ici -->
@@ -42,7 +42,7 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link" href="home">
+        <a class="nav-link" href="{{asset('home')}}">
             {{-- <i class="fas fa-fw fa-table"></i> --}}
             <span>Accueil</span></a>
     </li>
@@ -84,9 +84,9 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Espace Tontine:</h6>
-                <a class="collapse-item" href="Tontines">Consulter les Tontines</a>
-                <a class="collapse-item" href="mestontines">Mes Tontines</a>
-                <a class="collapse-item" href="HistoriqueTontines">Historique </a>
+                <a class="collapse-item" href="{{asset('Tontines')}}">Consulter les Tontines</a>
+                <a class="collapse-item" href="{{asset('mestontines')}}">Mes Tontines</a>
+                {{-- <a class="collapse-item" href="HistoriqueTontines">Historique </a> --}}
 
         </div>
     </li>
@@ -99,8 +99,20 @@
     </li> --}}
 
     <!-- Nav Item - Tables -->
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{asset('/mes-transactions')}}">
+        {{-- <i class="fas fa-fw fa-table"></i> --}}
+        <span> Mes Transactions</span></a>
+</li>
+
     <li class="nav-item">
-        <a class="nav-link" href="tables">
+        <a class="nav-link" href="{{asset('HistoriqueTontines')}}">
+            {{-- <i class="fas fa-fw fa-table"></i> --}}
+            <span>Historique</span></a>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{asset('tables')}}">
             {{-- <i class="fas fa-fw fa-table"></i> --}}
             <span>A propos</span></a>
     </li>

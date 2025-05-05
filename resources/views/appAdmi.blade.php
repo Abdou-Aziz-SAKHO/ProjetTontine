@@ -9,18 +9,28 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - 404</title>
+    <title>SB Admin 2 - Blank</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="{{asset('css/sb-admin-2.min.css')}}"" rel="stylesheet">
+  {{-- sama bootstrap --}}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
+<!-- Bootstrap CSS -->
+{{-- <link href="{{asset('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css')}}" rel="stylesheet">
+
+<!-- jQuery et Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+
 
 <body id="page-top">
 
@@ -28,7 +38,7 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        @include('layout.sidebar')
+        @include('layout.sidebarAdmi')
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -38,28 +48,34 @@
             <div id="content">
 
                 <!-- Topbar -->
-               @include('layout.navbar')
+                @include('layout.navbar')
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- 404 Error Text -->
-                    <div class="text-center">
-                        <div class="error mx-auto" data-text="404">404</div>
-                        <p class="lead text-gray-800 mb-5">Page Not Found</p>
-                        <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
-                        <a href="index.html">&larr; Back to Dashboard</a>
-                    </div>
+                    <!-- Page Heading -->
+                    @yield('contenue')
 
                 </div>
                 <!-- /.container-fluid -->
+             @if(session('success'))
+                   <div class="alert alert-success">
+                   {{ session('success') }}
+                     </div>
+             @endif
+
+            @if(session('error'))
+                 <div class="alert alert-danger">
+                {{ session('error') }}
+                  </div>
+            @endif
 
             </div>
             <!-- End of Main Content -->
 
             <!-- Footer -->
-           @include('layout.footer')
+            @include('layout.footer')
             <!-- End of Footer -->
 
         </div>
@@ -87,7 +103,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="register">Logout</a>
                 </div>
             </div>
         </div>
@@ -102,6 +118,10 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+
+
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
 
 </body>
 
