@@ -84,7 +84,7 @@
                                     <tbody>
                                         @foreach ($tontines as $tontine)
                                             <tr>
-                                                <td>{{ $tontine->image->nomImage ?? 'Aucune nom' }}</td>
+                                                <td>{{ $tontine->nom_tontine ?? 'Aucune nom' }}</td>
                                                 <td>{{ $tontine->datedebut }}</td>
                                                 <td>{{ $tontine->datefin }}</td>
 

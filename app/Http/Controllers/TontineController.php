@@ -3,310 +3,281 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tontine;
+use App\Models\cotisation;
 use App\Models\Participant;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Container\Attributes\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
-use Illuminate\Support\Facades\DB;
 use App\Models\Image;
+use Carbon\Carbon;
+use App\Models\Demande;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-    class TontineController extends Controller
-    {
-        public function index()
+class TontineController extends Controller
 {
-
-
-        // Récupérer toutes les tontines actives
-        // $tontines = Tontine::where('datefin', '>', Carbon::now())->get();
-        // Récupérer les tontines dont la date de début est dans le futur ou aujourd'hui
-    $tontines = Tontine::where('datedebut', '>=', Carbon::now())->get();
-
-        // Retourner la vue avec les tontines
+    public function index()
+    {
+        $tontines = Tontine::where('datedebut', '>=', Carbon::now())->get();
         return view('page.boards.Tontine', compact('tontines'));
     }
 
+    public function participer($id)
+    {
+        $tontine = Tontine::findOrFail($id);
+        $user = Auth::user();
+        $participant = Participant::where('iduser', $user->id)->first();
 
-
-
-        /**
-         * Affiche la page de participation à une tontine.
-         *
-         * @param int $id L'ID de la tontine.
-         * @return \Illuminate\View\View
-         */
-
-        public function participer($id)
-        {
-            $tontine = Tontine::findOrFail($id);
-            $user = FacadesAuth::user();
-            $participant = Participant::where('iduser', $user->id)->first();
-
-          if (!$user) {
-                return redirect()->route('login')->with('error', 'Vous devez être connecté pour participer.');
-            }
-
-
-            if ($tontine->participants()->where('iduser', $user->id)->exists()) {
-                return redirect()->route('Tontines')->with('error', 'Vous êtes déjà inscrit à cette tontine.');
-            }
-
-             // Insérer uniquement l'idtontine et l'iduser dans la table participants
-           DB::table('participants')->insert([
-               'idtontine' => $tontine->id,
-                 'iduser' => $user->id,
-                    'Adresse' => $participant->Adresse,
-                    'dateNaissance' => $participant->dateNaissance,
-                    'imageCni' => $participant->imageCni,
-                       'created_at' => now(),
-                 'updated_at' => now(),]);
-
-            // $tontine->participants()->attach($user->id);
-
-            return redirect()->route('Tontines')->with('success', 'Vous avez rejoint la tontine avec succès.');
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour participer.');
         }
 
+        if ($tontine->participants()->where('iduser', $user->id)->exists()) {
+            return redirect()->route('Tontines')->with('error', 'Vous êtes déjà inscrit à cette tontine.');
+        }
 
+        DB::table('participants')->insert([
+            'idtontine' => $tontine->id,
+            'iduser' => $user->id,
+            'Adresse' => $participant->Adresse,
+            'dateNaissance' => $participant->dateNaissance,
+            'imageCni' => $participant->imageCni,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('Tontines')->with('success', 'Vous avez rejoint la tontine avec succès.');
+    }
     public function mesTontines()
-    {
-        // Récupérer l'utilisateur connecté
-        $user = FacadesAuth::user();
-        // Récupérer les tontines auxquelles l'utilisateur a participé
-        $tontines = $user->tontines;
+{
+    $user = Auth::user();
 
-          // Récupérer les tontines auxquelles l'utilisateur a participé
+    // Récupérer les tontines auxquelles l'utilisateur participe
     $tontines = Tontine::whereHas('participants', function ($query) use ($user) {
         $query->where('iduser', $user->id);
-    })->withCount('participants')->get(); // Compter les participants pour chaque tontine
+    })->withCount('participants')->get();
 
+    // Récupérer les demandes non lues pour l'utilisateur connecté
+    $demandesNonLues = Demande::where('status', 'non_lu')  // Filtrer par 'status' = 'non_lu'
+                              ->where('user_id', $user->id) // Condition pour l'utilisateur connecté
+                              ->whereHas('tontine', function ($query) {
+                                  $query->where('gerant_id', Auth::id()); // Vérifier que l'utilisateur est le gérant
+                              })
+                              ->with(['user', 'tontine']) // Charger les relations
+                              ->get();
 
-        // Retourner la vue avec les tontines
-        return view('page.boards.mestontines', compact('tontines'));
-    }
+    // Transmettre à la vue
+    return view('page.boards.mestontines', compact('tontines', 'demandesNonLues'));
+}
 
 
     public function historiqueTontine()
-{
-    // Récupérer l'utilisateur connecté
-    $user = FacadesAuth::user();
-
-    // Récupérer les tontines auxquelles l'utilisateur a participé et dont la date de fin est passée
-    $tontines = Tontine::whereHas('participants', function ($query) use ($user) {
-        $query->where('iduser', $user->id);
-    })
-    ->where('datefin', '<', Carbon::now()) // Condition : date de fin passée
-    ->withCount('participants') // Compter les participants pour chaque tontine
-    ->get();
-
-    // Retourner la vue avec les tontines
-    return view('page.boards.historiqueParticipant', compact('tontines'));
-}
-
-public function seRetirer($id)
-{
-    $tontine = Tontine::findOrFail($id); // Trouver la tontine par son ID
-    $user = FacadesAuth::user(); // Récupérer l'utilisateur connecté
-
-    // Vérifier si la date de début de la tontine est dans le futur
-    if ($tontine->datedebut <= Carbon::now()) {
-        return redirect()->route('Tontines')->with('error', 'Vous ne pouvez pas vous retirer d\'une tontine qui a déjà commencé
-        veulliez Contactez l\'administrateur .');
-    }
-
-    // Supprimer l'utilisateur de la table participants
-    DB::table('participants')
-        ->where('idtontine', $tontine->id)
-        ->where('iduser', $user->id)
-        ->delete();
-
-    return redirect()->route('Tontines')->with('success', 'Vous vous êtes retiré de la tontine avec succès.');
-}
-
-public function indexe(){
-    // Charger les tontines avec leurs images associées
-    $tontines = Tontine::with('image')->get();
-
-    // Retourner la vue avec les tontines
-    return view('page.boards.tirages', compact('tontines'));
-}
-
-
-        public function create()
-        {
-            return view('page.boards.createTontine');
-        }
-
-        public function store(Request $request)
-        {
-            $request->validate([
-                'nomImage' => 'required|string|max:255',
-                'datedebut' => [
-            'required',
-            'date',
-            'after_or_equal:today', // La date de début doit être aujourd'hui ou après
-            function ($attribute, $value, $fail) {
-                if (date('Y', strtotime($value)) != 2025) {
-                    $fail('La date de début doit être en 2025.');
-                }
-            },
-        ],
-        'datefin' =>  'required|date|after:datedebut',
-
-                'montant_total' => 'required|numeric|min:0', // Montant total obligatoire et positif
-                'montant_base' => 'required|numeric|min:0', // Montant de base obligatoire et positif
-                'nbreParticipant' => 'required|integer|min:5', // Nombre de participants minimum 1
-                'frequence' => 'required|string|in:hebdomadaire,mensuel,annuel', // Fréquence obligatoire (exemple : hebdomadaire, mensuel, annuel)
-            ]);
-
-            // Créer une nouvelle tontine avec les données validées
-           $tontine = Tontine::create($request->all());
-
-            if($tontine){
-                $Image = new Image();
-                $Image->idtontine = $tontine->id; // Associer l'image à la tontine
-                $Image->nomImage = $request->nomImage;
-                $Image->save();
-
-            }
-            // Rediriger vers la liste des tontines avec un message de succès
-          return redirect()->route('page.boards.listerlesTontines')->with('success', 'Tontine créée avec succès.');
-
-           // Ajouter une tontine avec le statut "active"
-          Tontine::create(array_merge($request->all(), ['status' => 'active']));
-
-          return redirect()->route('dashboard')->with('success', 'Tontine créée avec succès.');
-
-        }
-
-        public function listTontines()
-        {
-              // Récupérer toutes les tontines
-               $tontines = Tontine::all();
-
-              // Retourner la vue avec les tontines
-           return view('page.boards.cards', compact('tontines'));
-        }
-
-
-        public function destroy($id)
-        {
-            // Trouver la tontine par son ID
-            $tontine = Tontine::findOrFail($id);
-
-            // Vérifier si la tontine a déjà démarré
-           if (now()->toDateString() >= $tontine->datedebut) {
-
-             // Supprimer les images associées
-             $tontine->image()->delete();
-
-            // Supprimer la tontine
-            $tontine->delete();
-
-            // Rediriger avec un message de succès
-            return redirect()->route('page.boards.listerlesTontines')->with('success', 'Tontine supprimée avec succès.');
-                }
-                 }
-
-
-
-                 public function participants()
-                 {
-                     $users = User::with(['tontines', 'cotisations.tontine'])->get();
-                     return view('page.boards.participants', compact('users'));
-                 }
-
-        public function historique()
-        {
-
-    // Récupérer les tontines dont le tirage a été effectué et la date de fin est passée
-    $tontines = Tontine::where('datefin', '<', now())
-                        ->get();
-
-    // Retourner la vue avec les tontines filtrées
-    return view('page.boards.historique', compact('tontines'));
-        }
-
-        public function modifier()
-       {
-    // Récupérer les tontines qui n'ont pas encore démarré
-    $tontines = Tontine::where('datedebut', '>', now())->get();
-
-    // Retourner la vue avec les tontines modifiables
-    return view('page.boards.modifier', compact('tontines'));
-      }
-
-      public function edit($id)
-     {
-    // Récupérer la tontine par son ID
-    $tontine = Tontine::findOrFail($id);
-
-    // Vérifier si la tontine n'a pas encore démarré
-    if ($tontine->datedebut <= now()) {
-        return redirect()->route('tontines.modifier')->with('error', 'Cette tontine ne peut pas être modifiée car elle a déjà démarré.');
-    }
-
-    // Retourner la vue avec le formulaire de modification
-    return view('page.boards.edit', compact('tontine'));
-     }
-
-     public function update(Request $request, $id)
-     {
-    // Valider les données
-    $request->validate([
-        'nomImage' => 'required|string|max:255',
-        'datedebut' => 'required|date|after:today',
-        'datefin' => 'required|date|after:datedebut',
-        'montant_base' => 'required|numeric|min:0',
-        'montant_total' => 'required|numeric|min:0',
-        'nbreParticipant' => 'required|integer|min:5',
-        'frequence' => 'required|string|in:hebdomadaire,mensuel,annuel',
-    ]);
-
-    // Récupérer la tontine
-    $tontine = Tontine::findOrFail($id);
-
-    // Mettre à jour les informations
-    $tontine->datedebut = $request->datedebut;
-    $tontine->datefin = $request->datefin;
-    $tontine->montant_base = $request->montant_base;
-    $tontine->montant_total= $request->montant_total;
-    $tontine->nbreParticipant = $request->nbreParticipant;
-    $tontine->frequence = $request->frequence;
-    $tontine->save();
-
-     // Mettre à jour le nom de l'image (relation)
-     if ($tontine->image) {
-        $tontine->image->nomImage = $request->nomImage;
-        $tontine->image->save();
-    }
-    // Rediriger avec un message de succès
-    return redirect()->route('tontines.modifier')->with('success', 'Tontine modifiée avec succès.');
-    }
-
-    //fonction pour afficher les détails d'une tontine
-    public function consulter()
     {
-        // Récupérer toutes les tontines
+        $user = Auth::user();
+        $tontines = Tontine::whereHas('participants', function ($query) use ($user) {
+            $query->where('iduser', $user->id);
+        })->where('datefin', '<', Carbon::now())->withCount('participants')->get();
+
+        return view('page.boards.historiqueParticipant', compact('tontines'));
+    }
+
+    public function seRetirer($id)
+    {
+        $tontine = Tontine::findOrFail($id);
+        $user = Auth::user();
+
+        if ($tontine->datedebut <= Carbon::now()) {
+            return redirect()->route('Tontines')->with('error', 'Vous ne pouvez pas vous retirer d\'une tontine qui a déjà commencé. Veuillez contacter l\'administrateur.');
+        }
+
+        DB::table('participants')
+            ->where('idtontine', $tontine->id)
+            ->where('iduser', $user->id)
+            ->delete();
+
+        return redirect()->route('Tontines')->with('success', 'Vous vous êtes retiré de la tontine avec succès.');
+    }
+
+    public function indexe()
+    {
+        $tontines = Tontine::with('image')->get();
+        return view('page.boards.tirages', compact('tontines'));
+    }
+
+    public function create()
+    {
+        return view('page.boards.createTontine');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nom_tontine' => 'required|string|max:255',
+            'nomImage' => 'required|string|max:255',
+            'datedebut' => [
+                'required',
+                'date',
+                'after_or_equal:today',
+                function ($attribute, $value, $fail) {
+                    if (date('Y', strtotime($value)) != 2025) {
+                        $fail('La date de début doit être en 2025.');
+                    }
+                },
+            ],
+            'datefin' => 'required|date|after:datedebut',
+            'montant_total' => 'required|numeric|min:0',
+            'montant_base' => 'required|numeric|min:0',
+            'nbreParticipant' => 'required|integer|min:5',
+            'frequence' => 'required|string|in:HEBDOMADAIRE,MENSUELLE,ANNUELLE',
+        ]);
+
+        // Ajouter gerant_id manuellement dans les données de la requête
+        $data = $request->all();
+        $data['gerant_id'] = Auth::id(); // Assure-toi d'avoir 'use Auth;' en haut du fichier
+
+        // Créer la tontine avec les données, y compris le gerant_id
+        $tontine = Tontine::create($data);
+
+        if ($tontine) {
+            $image = new Image();
+            $image->idtontine = $tontine->id;
+            $image->nomImage = $request->nomImage;
+            $image->save();
+        }
+
+        return redirect()->route('page.boards.listerlesTontines')->with('success', 'Tontine créée avec succès.');
+    }
+
+    public function listTontines()
+    {
         $tontines = Tontine::all();
-
-        // Retourner la vue avec les tontines
-        return view('page.boards.consulter', compact('tontines'));
+        return view('page.boards.cards', compact('tontines'));
     }
-    // Fonction pour afficher les détails d'une tontine spécifique
-    public function show($id)
+
+    public function destroy($id)
     {
-        // Récupérer la tontine par son ID
         $tontine = Tontine::findOrFail($id);
 
-        // Retourner la vue avec les détails de la tontine
+        if (now()->toDateString() >= $tontine->datedebut) {
+            $tontine->image()->delete();
+            $tontine->delete();
+
+            return redirect()->route('page.boards.listerlesTontines')->with('success', 'Tontine supprimée avec succès.');
+        }
+    }
+
+    public function participants()
+    {
+        $users = User::with(['tontines', 'cotisations.tontine'])->get();
+        return view('page.boards.participants', compact('users'));
+    }
+
+    public function historique()
+    {
+        $tontines = Tontine::where('datefin', '<', now())->get();
+        return view('page.boards.historique', compact('tontines'));
+    }
+
+    public function modifier()
+    {
+        $tontines = Tontine::where('datedebut', '>', now())->get();
+        return view('page.boards.modifier', compact('tontines'));
+    }
+
+    public function edit($id)
+    {
+        $tontine = Tontine::findOrFail($id);
+
+        if ($tontine->datedebut <= now()) {
+            return redirect()->route('tontines.modifier')->with('error', 'Cette tontine ne peut pas être modifiée car elle a déjà démarré.');
+        }
+
+        return view('page.boards.edit', compact('tontine'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nom_tontine' => 'required|string|max:255',
+            'nomImage' => 'required|string|max:255',
+            'datedebut' => 'required|date|after:today',
+            'datefin' => 'required|date|after:datedebut',
+            'montant_base' => 'required|numeric|min:0',
+            'montant_total' => 'required|numeric|min:0',
+            'nbreParticipant' => 'required|integer|min:5',
+            'frequence' => 'required|string|in:hebdomadaire,mensuel,annuel',
+        ]);
+
+        $tontine = Tontine::findOrFail($id);
+
+        $tontine->update([
+            'nom_tontine' => $request->nom_tontine,
+            'datedebut' => $request->datedebut,
+            'datefin' => $request->datefin,
+            'montant_base' => $request->montant_base,
+            'montant_total' => $request->montant_total,
+            'nbreParticipant' => $request->nbreParticipant,
+            'frequence' => $request->frequence,
+        ]);
+
+        if ($tontine->image) {
+            $tontine->image->update([
+                'nomImage' => $request->nomImage,
+            ]);
+        }
+
+        return redirect()->route('tontines.modifier')->with('success', 'Tontine mise à jour avec succès.');
+    }
+    public function cotisation($id)
+{
+    $tontine = Tontine::findOrFail($id);
+    $user = Auth::user();
+
+    // Vérifier si l'utilisateur est déjà inscrit à la tontine
+    $participant = $tontine->participants()->where('iduser', $user->id)->first();
+
+    if (!$participant) {
+        return redirect()->route('Tontines')->with('error', 'Vous devez d\'abord participer à cette tontine.');
+    }
+
+    // Calculer le prochain paiement en fonction de la fréquence
+    $nextPaymentDate = $this->getNextPaymentDate($tontine->frequence);
+
+    return view('page.boards.paiement', compact('tontine', 'nextPaymentDate'));
+}
+
+private function getNextPaymentDate($frequence)
+{
+    $today = Carbon::now();
+
+    switch ($frequence) {
+        case 'hebdomadaire':
+            return $today->addWeek();  // Prochain paiement dans 1 semaine
+        case 'mensuel':
+            return $today->addMonth();  // Prochain paiement dans 1 mois
+        case 'annuel':
+            return $today->addYear();  // Prochain paiement dans 1 an
+        default:
+            return $today;
+    }
+}
+
+
+    public function consulter()
+    {
+        $tontines = Tontine::all();
+        return view('page.boards.consulter', compact('tontines'));
+    }
+
+    public function show($id)
+    {
+        $tontine = Tontine::findOrFail($id);
         return view('page.boards.details', compact('tontine'));
     }
 
     public function updateTontine(Request $request, $id)
     {
-        // Valider les données du formulaire
         $request->validate([
+            'nom_tontine' => 'required|string|max:255',
             'nomImage' => 'required|string|max:255',
             'datedebut' => 'required|date',
             'datefin' => 'required|date|after_or_equal:datedebut',
@@ -316,11 +287,10 @@ public function indexe(){
             'nbreParticipant' => 'required|integer|min:1',
         ]);
 
-        // Récupérer la tontine par son ID
         $tontine = Tontine::findOrFail($id);
 
-        // Mettre à jour les informations de la tontine
         $tontine->update([
+            'nom_tontine' => $request->input('nom_tontine'),
             'datedebut' => $request->input('datedebut'),
             'datefin' => $request->input('datefin'),
             'montant_base' => $request->input('montant_base'),
@@ -329,17 +299,56 @@ public function indexe(){
             'nbreParticipant' => $request->input('nbreParticipant'),
         ]);
 
-        // Mettre à jour le nom de l'image associée (si applicable)
         if ($tontine->image) {
             $tontine->image->update([
                 'nomImage' => $request->input('nomImage'),
             ]);
         }
 
-        // Rediriger avec un message de succès
         return redirect()->route('tontines.modifier')->with('success', 'Tontine mise à jour avec succès.');
     }
+    public function indexDemande()
+{
+    $demandesNonLues = Demande::where('lu', '')->with('user', 'tontine')->get();
+    $tontines = Tontine::where('datedebut', '>=', now())->get();
+
+    return view('page.boards.Tontine', [
+        'tontines' => $tontines,
+        'demandesNonLues' => $demandesNonLues
+    ]);
+}
 
 
 
+
+public function generateCotisationsForTontine($tontineId)
+{
+    $tontine = Tontine::find($tontineId);
+
+    // Vérifier si la tontine existe
+    if (!$tontine) {
+        return redirect()->back()->with('error', 'Tontine non trouvée');
     }
+
+    // Récupérer tous les participants de la tontine
+    $participants = Participant::where('idtontine', $tontineId)->get();
+
+    // Récupérer la prochaine date de paiement
+    $nextPaymentDate = $tontine->getNextPaymentDate();
+
+    // Enregistrer une cotisation pour chaque participant
+    foreach ($participants as $participant) {
+        // Créer un enregistrement de cotisation
+        cotisation::create([
+            'idparticipant' => $participant->id,
+            'tontine_id' => $tontine->id,
+            'montant' => $tontine->montant_base, // Montant de base de la tontine
+            'date_paiement' => $nextPaymentDate,
+            'est_paye' => false, // La cotisation n'est pas encore payée
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'Cotisations générées pour tous les participants.');
+}
+
+}

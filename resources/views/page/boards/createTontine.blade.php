@@ -103,18 +103,19 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <label for="NomImage">Nom du Tontine:</label>
-                                            <input type="string" name="nomImage" id="nomImage" class="form-control" required>
-                                            @error('nomImage')
+                                            <<label for="nom_tontine">Nom de la Tontine :</label>
+                                            <input type="text" name="nom_tontine" id="nom_tontine" class="form-control" required>
+                                            @error('nom_tontine')
                                                 <small style="color: red">{{ $message }}</small>
                                             @enderror
+
                                         </div>
                                         <div class="form-group">
                                             <label for="frequence">Fréquence :</label>
                                             <select name="frequence" id="frequence" class="form-control" required>
-                                                <option value="hebdomadaire">Hebdomadaire</option>
-                                                <option value="mensuel">Mensuel</option>
-                                                <option value="annuel">Annuel</option>
+                                                <option value="HEBDOMADAIRE">Hebdomadaire</option>
+                                                <option value="MENSUELLE">Mensuel</option>
+                                                <option value="ANNUELLE">Annuel</option>
                                             </select>
                                             @error('frequence')
                                                 <small style="color: red">{{ $message }}</small>

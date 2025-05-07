@@ -23,7 +23,7 @@
                     <tr>
 
                         <td>
-                            {{ $tontine->image->nomImage }}
+                            {{ $tontine->nom_tontine }}
                             {{-- {{ $tontine->cotisations->where('iduser', $user->id)->sum('montant') }} FCFA --}}
                         </td>
                         <td>

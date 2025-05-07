@@ -35,7 +35,7 @@
                 @foreach($tontines as $tontine)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $tontine->image->nomImage}}</td>
+                        <td>{{ $tontine->nom_tontine}}</td>
                         <td>{{ $tontine->datedebut }}</td>
                         <td>{{ $tontine->datefin }}</td>
                         <td>{{ $tontine->montant_Total }}</td>

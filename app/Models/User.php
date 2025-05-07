@@ -60,4 +60,14 @@ class User extends Authenticatable
 {
     return $this->hasMany(Cotisation::class, 'iduser', 'id');
 }
+
+
+
+    public function demandes()
+    {
+        return $this->hasMany(Demande::class, 'user_id');
+    }
+
+
+
 }

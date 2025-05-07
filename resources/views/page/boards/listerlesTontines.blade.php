@@ -58,24 +58,29 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
+                                        <th>numero</th>
+                                        <th>Nom</th>
                                         <th>Date de début</th>
                                         <th>Date de fin</th>
-                                        <th>Montant total</th>
+                                        <th>Montant Total</th>
                                         <th>Montant de base</th>
-                                        <th>Nombre de participants</th>
+                                        <th>Nombre de Participants </th>
                                         <th>Fréquence</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($tontines as $tontine)
+                                    @foreach($tontines as $tontine)
                                         <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $tontine->nom_tontine}}</td>
                                             <td>{{ $tontine->datedebut }}</td>
                                             <td>{{ $tontine->datefin }}</td>
-                                            <td>{{ $tontine->montant_total }} FCFA</td>
-                                            <td>{{ $tontine->montant_base }} FCFA</td>
+                                            <td>{{ $tontine->montant_Total }}</td>
+                                            <td>{{ $tontine->montant_base }}</td>
                                             <td>{{ $tontine->nbreParticipant }}</td>
-                                            <td>{{ ucfirst($tontine->frequence) }}</td>
-                                        </tr>
+                                            <td>{{ $tontine->frequence }}</td>
+                                            <td>
                                     @endforeach
                                 </tbody>
                             </table>

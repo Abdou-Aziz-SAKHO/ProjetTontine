@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('tontines', function (Blueprint $table) {
             $table->id();
+            $table->string('nom_tontine');
             $table->date('datedebut');
             $table->date('datefin');
-            $table->integer('montant_Total');
-            $table->integer('montant_base');
-            $table->integer('nbreParticipant');
-            $table->enum('frequence', ['HEBDOMADAIRE', 'MENSUELLE', 'ANNUELLE']) ;
+            $table->unsignedInteger('montant_total');
+            $table->unsignedInteger('montant_base');
+            $table->unsignedInteger('nbreParticipant');
+            $table->enum('frequence', ['HEBDOMADAIRE', 'MENSUELLE', 'ANNUELLE']);
             $table->timestamps();
         });
+
 
 
 

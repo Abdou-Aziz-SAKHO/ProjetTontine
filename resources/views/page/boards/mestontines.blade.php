@@ -35,7 +35,7 @@
             <tbody>
                 @foreach($tontines as $tontine)
                     <tr>
-                        <td>{{ $tontine->image->nomImage }}</td>
+                        <td>{{ $tontine->nom_tontine }}</td>
                         <td>{{ $tontine->datedebut }}</td>
                         <td>{{ $tontine->datefin }}</td>
                         <td>{{ $tontine->montant_Total }}</td>
@@ -44,15 +44,20 @@
                         <td>{{ $tontine->participants_count }}</td>
                         <td>{{ $tontine->frequence }}</td>
                         <td>
-                            <!-- Bouton Se retirer -->
                             @if($tontine->datedebut > Carbon\Carbon::now())
                                 <form action="{{ route('tontines_seRetirer', $tontine->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir vous retirer de cette tontine ?');">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm">Se retirer</button>
                                 </form>
                             @else
-                                <!-- Bouton Paiement -->
-                                <a href="{{ route('tontines_cotisation', $tontine->id) }}" class="btn btn-success btn-sm">Paiement</a>
+                                <!-- Vérifier si un paiement est nécessaire selon la fréquence -->
+                                @if ($tontine->frequence == 'hebdomadaire' && Carbon::now()->isAfter($nextPaymentDate))
+                                    <a href="{{ route('tontines_paiement', $tontine->id) }}" class="btn btn-success btn-sm">Paiement Hebdomadaire</a>
+                                @elseif ($tontine->frequence == 'mensuel' && Carbon::now()->isAfter($nextPaymentDate))
+                                    <a href="{{ route('tontines_paiement', $tontine->id) }}" class="btn btn-success btn-sm">Paiement Mensuel</a>
+                                @elseif ($tontine->frequence == 'annuel' && Carbon::now()->isAfter($nextPaymentDate))
+                                    <a href="{{ route('tontines_paiement', $tontine->id) }}" class="btn btn-success btn-sm">Paiement Annuel</a>
+                                @endif
                             @endif
                         </td>
                     </tr>
