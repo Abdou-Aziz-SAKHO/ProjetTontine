@@ -38,6 +38,11 @@ class sidebarcontroller extends Controller
     public function Consultertontine(){
         return view('page.boards.Tontine');
     }
+    public function Dashboard()
+{
+    return view('page.boards.Dashboard');
+}
+
 
     }
 
